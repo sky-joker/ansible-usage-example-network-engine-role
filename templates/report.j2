@@ -1,0 +1,20 @@
+{% for key, value in interfaces_facts.items() %}
+inteface_name: {{ key }}
+{% if value.ip_address.matches %}
+  ip_address:
+{% for ip in value.ip_address.matches %}
+    - {{ ip }}
+{% endfor %}
+{% endif %}
+{% if value.vlan_id %}
+  vlan_id:
+{% for vlan_id in value.vlan_id %}
+    - {{ vlan_id.matches }}
+{% endfor %}
+{% endif %}
+{% if value.port_status.matches %}
+  port_status: {{ value.port_status.matches.0 }}
+{% endif %}
+  negotiation: {{ value.negotiation.matches.0 }}
+{% endfor %}
+

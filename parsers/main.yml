@@ -1,0 +1,69 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show run
+    network_os: ios
+
+- name: match sections
+  pattern_match:
+    regex: "^interface"
+    match_all: true
+    match_greedy: true
+  export: true
+  register: section
+
+- name: match interface values
+  pattern_group:
+    - name: interface name
+      pattern_match:
+        regex: "interface (.*)"
+        content: "{{ item }}"
+      register: interface_name
+
+    - name: ip address
+      pattern_match:
+        regex: "ip address (.*)"
+        content: "{{ item }}"
+      register: ip_address
+
+    - name: vlan
+      pattern_match:
+        regex: "vlan-id dot1q (.*)"
+        content: "{{ item }}"
+        match_all: true
+      register: vlan_id
+
+    - name: port status
+      pattern_match:
+        regex: ".*(shu.*)"
+        content: "{{ item }}"
+      register: port_status
+
+    - name: negotiation
+      pattern_match:
+        regex: "negotiation (.*)"
+        content: "{{ item }}"
+      register: negotiation
+  loop: "{{ section }}"
+  export: true
+  register: interfaces
+
+- name: generate json data structure
+  json_template:
+    template:
+      - key: "{{ item.interface_name.matches.0 }}"
+        object:
+          - key: ip_address
+            value: "{{ item.ip_address }}"
+          - key: vlan_id
+            value: "{{ item.vlan_id }}"
+          - key: port_status
+            value: "{{ item.port_status }}"
+          - key: negotiation
+            value: "{{ item.negotiation }}"
+  loop: "{{ interfaces }}"
+  export: true
+  export_as: dict
+  register: interfaces_facts
+

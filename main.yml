@@ -1,0 +1,24 @@
+---
+- name: ansible-network.network-engine role test
+  hosts: cisco
+  gather_facts: no
+  roles:
+    - ansible-network.network-engine
+
+  tasks:
+    - name: execute command 'show run' on csr1000
+      ios_command:
+        commands:
+          - show run
+      register: show_run_result
+
+    - name: parse the results of 'show run' command
+      command_parser:
+        file: "parsers/main.yml"
+        content: "{{ show_run_result.stdout[0] }}"
+
+    - name: generate report file
+      template:
+        src: "templates/report.j2"
+        dest: report.yml
+
