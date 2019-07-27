@@ -1,15 +1,19 @@
-inteface_name: GigabitEthernet1
-  ip_address:
-    - 192.168.0.68 255.255.255.0
-  negotiation: auto
-inteface_name: GigabitEthernet2
-  vlan_id:
-    - 10
-    - 20
-    - 30
-  port_status: shutdown
-  negotiation: auto
-inteface_name: GigabitEthernet3
-  port_status: shutdown
-  negotiation: auto
+interfaces:
+  - inteface:
+      name: GigabitEthernet1
+      ip_address:
+        - 192.168.0.68 255.255.255.0
+      negotiation: auto
+  - inteface:
+      name: GigabitEthernet2
+      vlan_id:
+        - 10
+        - 20
+        - 30
+      port_status: shutdown
+      negotiation: auto
+  - inteface:
+      name: GigabitEthernet3
+      port_status: shutdown
+      negotiation: auto
 
